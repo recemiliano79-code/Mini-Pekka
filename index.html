@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sparks & Brillas</title>
+<title>Para Ti</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --sparks:#6fb1ff;
-  --brillas:#f7b733;
-  --glass:rgba(255,255,255,.07);
+  --color-1:#a8d1ff; /* Tono suave para la primera canción */
+  --color-2:#ffd080; /* Tono cálido para la segunda */
+  --glass:rgba(255,255,255,.05);
 }
 
 body {
@@ -19,243 +19,234 @@ body {
   min-height: 100vh;
   font-family: 'Outfit', sans-serif;
   color: white;
-  background: #000;
-  overflow-x: hidden;
+  background: #050505;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
 }
 
-/* --- FONDO ESPACIAL --- */
+/* --- FONDO ESTRELLADO --- */
 .stars-container {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   z-index: -1;
-  background: radial-gradient(ellipse at bottom, #0d1d31 0%, #000 100%);
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
 }
 
-.shooting-star {
-  position: absolute;
-  height: 2px;
-  background: linear-gradient(-45deg, #fff, rgba(0, 0, 255, 0));
-  filter: drop-shadow(0 0 6px #fff);
-  animation: shooting 4s ease-in-out infinite;
-  opacity: 0;
-}
-
-@keyframes shooting {
-  0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 1; width: 0; }
-  20% { width: 150px; }
-  100% { transform: translateX(-600px) translateY(600px) rotate(45deg); opacity: 0; width: 0; }
-}
-
-.shooting-star:nth-child(1) { top: 0%; right: 10%; animation-delay: 0s; }
-.shooting-star:nth-child(2) { top: 20%; right: 30%; animation-delay: 2s; }
-.shooting-star:nth-child(3) { top: -10%; right: 50%; animation-delay: 4.5s; }
-
-/* --- INTERFAZ --- */
+/* --- TÍTULO --- */
 h1 {
   font-family: 'Dancing Script', cursive;
-  font-size: 3.5rem;
-  background: linear-gradient(to right, var(--sparks), #fff, var(--brillas));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 20px 0;
+  font-size: 3rem;
+  margin: 40px 0;
   text-align: center;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255,255,255,0.5);
 }
 
-.container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 25px; padding-bottom: 50px; }
+.container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 30px; }
 
 .card {
   background: var(--glass);
-  backdrop-filter: blur(15px);
-  border-radius: 28px;
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
   padding: 25px;
   border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
-.song-title { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 5px; }
-.song-artist { text-align: center; font-size: .8rem; opacity: .6; letter-spacing: 2px; margin-bottom: 20px; }
+.song-info { text-align: center; margin-bottom: 20px; }
+.song-title { font-size: 1.6rem; font-weight: 700; display: block; }
+.song-artist { font-size: 0.9rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 2px; }
 
-.player {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(255,255,255,1);
-  border-radius: 50px; padding: 10px 18px; color: #111; margin-bottom: 20px;
+/* REPRODUCTOR */
+.player-controls {
+  display: flex; align-items: center; gap: 15px;
+  background: white; border-radius: 50px; padding: 8px 15px;
+  margin-bottom: 20px;
 }
 
-.play {
-  width: 40px; height: 40px; border-radius: 50%; border: none;
-  background: #111; color: white; cursor: pointer; font-size: 1.2rem;
-  display: flex; align-items: center; justify-content: center;
+.play-btn {
+  width: 45px; height: 45px; border-radius: 50%; border: none;
+  background: #000; color: #fff; cursor: pointer; font-size: 1rem;
 }
 
-.progress { flex: 1; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; cursor: pointer; overflow: hidden; }
-.bar { height: 100%; width: 0%; background: #111; border-radius: 10px; transition: width 0.1s linear; }
+.progress-area { flex: 1; height: 5px; background: #eee; border-radius: 5px; position: relative; cursor: pointer; }
+.progress-bar { height: 100%; width: 0%; background: #000; border-radius: 5px; }
 
-.lyrics {
-  max-height: 160px; overflow-y: hidden; text-align: center;
+/* LETRAS DINÁMICAS */
+.lyrics-box {
+  height: 120px; overflow-y: hidden; position: relative;
+  text-align: center; mask-image: linear-gradient(transparent, black 20%, black 80%, transparent);
 }
 
-.lyrics span {
-  display: block; padding: 10px 0; font-size: 1.1rem;
-  opacity: 0.15; transition: all 0.5s ease; transform: scale(0.9);
+.lyrics-wrapper { transition: transform 0.4s ease-out; }
+
+.lyrics-box p {
+  margin: 0; padding: 15px 0; font-size: 1.1rem;
+  opacity: 0.2; transition: all 0.4s ease;
+  transform: scale(0.9);
 }
 
-.lyrics span.active {
-  opacity: 1; color: white; font-weight: 700; transform: scale(1.1);
+.lyrics-box p.active {
+  opacity: 1; transform: scale(1.1); font-weight: 600;
 }
 
-/* MENSAJE ESPECIAL */
-.btn-mensaje {
-  background: white; border: none; padding: 18px; border-radius: 20px;
-  color: #000; font-weight: 700; cursor: pointer; width: 100%;
-  font-family: 'Outfit'; font-size: 1.1rem; transition: 0.4s;
-  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+/* MENSAJE */
+.btn-leer {
+  background: white; color: black; border: none; padding: 20px;
+  border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;
+  font-size: 1.1rem; transition: 0.3s;
 }
 
-.btn-mensaje:hover { transform: scale(1.02); background: #f0f0f0; }
-
-.message-content {
-  display: none; margin-top: 25px; line-height: 1.8;
-  text-align: left; font-size: 1.05rem; color: #efefef;
-  animation: slideUp 1.2s ease forwards;
+.full-message {
+  display: none; padding: 20px 10px; line-height: 1.8;
+  font-size: 1.05rem; color: #ddd;
+  animation: fadeIn 1s ease;
 }
 
-.message-content p { margin-bottom: 15px; }
+.full-message p { margin-bottom: 20px; }
+strong { color: white; border-bottom: 1px solid var(--color-2); }
 
-@keyframes slideUp { 
-  from { opacity: 0; transform: translateY(30px); } 
-  to { opacity: 1; transform: translateY(0); } 
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-strong { color: var(--brillas); }
 </style>
 </head>
-
 <body>
 
-<div class="stars-container">
-  <div class="shooting-star"></div>
-  <div class="shooting-star"></div>
-  <div class="shooting-star"></div>
-</div>
+<div class="stars-container"></div>
 
-<h1>Sparks & Brillas</h1>
+<h1>Nuestra Historia</h1>
 
 <div class="container">
 
   <div class="card">
-    <div class="song-title" style="color:var(--sparks)">Sparks</div>
-    <div class="song-artist">Coldplay</div>
-    <div class="player">
-      <audio id="a1" src="sparks.mp3"></audio>
-      <button class="play" id="b1">▶</button>
-      <div class="progress"><div class="bar" id="bar1"></div></div>
+    <div class="song-info">
+      <span class="song-title" style="color:var(--color-1)">Sparks</span>
+      <span class="song-artist">Coldplay</span>
     </div>
-    <div class="lyrics" id="l1">
-      <span data-t="0">...</span>
-      <span data-t="15">Did I drive you away?</span>
-      <span data-t="21">I know what you'll say</span>
-      <span data-t="25">You say, "Oh, sing one we know"</span>
-      <span data-t="32">But I promise you this</span>
-      <span data-t="37">I'll always look out for you</span>
-      <span data-t="42">Yeah, that's what I'll do</span>
-      <span data-t="72">My heart is yours</span>
+    <div class="player-controls">
+      <audio id="audio1" src="sparks.mp3"></audio>
+      <button class="play-btn" onclick="togglePlay(1)" id="btn1">▶</button>
+      <div class="progress-area" onclick="seek(event, 1)">
+        <div class="progress-bar" id="bar1"></div>
+      </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="song-title" style="color:var(--brillas)">Brillas</div>
-    <div class="song-artist">León Larregui</div>
-    <div class="player">
-      <audio id="a2" src="brillas.mp3"></audio>
-      <button class="play" id="b2">▶</button>
-      <div class="progress"><div class="bar" id="bar2" style="background:var(--brillas)"></div></div>
-    </div>
-    <div class="lyrics" id="l2">
-      <span data-t="0">...</span>
-      <span data-t="18">Nos dimos todo lo que se nos dio</span>
-      <span data-t="24">Nos dimos todo eso y mucho más</span>
-      <span data-t="30">Para después reconocernos otra vez</span>
-      <span data-t="55">Brillas, y brillas tan lindo</span>
-      <span data-t="62">Y brillamos juntos entre pestañas</span>
+    <div class="lyrics-box" id="box1">
+      <div class="lyrics-wrapper" id="wrap1">
+        <p data-t="0">...</p>
+        <p data-t="15">Did I drive you away?</p>
+        <p data-t="20">I know what you'll say</p>
+        <p data-t="24">You say, "Oh, sing one we know"</p>
+        <p data-t="32">But I promise you this</p>
+        <p data-t="36">I'll always look out for you</p>
+        <p data-t="41">Yeah, that's what I'll do</p>
+        <p data-t="70">My heart is yours</p>
+      </div>
     </div>
   </div>
 
   <div class="card">
-    <button class="btn-mensaje" id="btnReveal" onclick="revelarMensaje()">¿Sabes por qué te amo? ✨</button>
-    <div class="message-content" id="msg">
+    <div class="song-info">
+      <span class="song-title" style="color:var(--color-2)">Brillas</span>
+      <span class="song-artist">León Larregui</span>
+    </div>
+    <div class="player-controls">
+      <audio id="audio2" src="brillas.mp3"></audio>
+      <button class="play-btn" onclick="togglePlay(2)" id="btn2">▶</button>
+      <div class="progress-area" onclick="seek(event, 2)">
+        <div class="progress-bar" id="bar2" style="background:var(--color-2)"></div>
+      </div>
+    </div>
+    <div class="lyrics-box" id="box2">
+      <div class="lyrics-wrapper" id="wrap2">
+        <p data-t="0">...</p>
+        <p data-t="18">Nos dimos todo lo que se nos dio</p>
+        <p data-t="24">Nos dimos todo eso y mucho más</p>
+        <p data-t="30">Para después reconocernos otra vez</p>
+        <p data-t="42">Amanecer colgados de un rincón</p>
+        <p data-t="55">Brillas, y brillas tan lindo</p>
+        <p data-t="61">Y brillamos juntos entre pestañas</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 50px;">
+    <button class="btn-leer" id="btnReveal" onclick="showMsg()">¿Sabes por qué te amo? ✨</button>
+    <div class="full-message" id="textMsg">
       <p>Porque intentar expresar todo lo que vive en mi corazón y en mi mente cuando pienso en ti es casi imposible, las palabras a veces se quedan cortas para lo que siento.</p>
-      
       <p>No tuviste que hacer nada extraordinario para ganarte mi amor, no hubo esfuerzos forzados ni promesas vacías, simplemente fuiste tú, siendo tú. Tu sonrisa, tu mirada, tus gestos, tu forma de hablar, incluso tus silencios… todo en ti empezó a quedarse conmigo sin que me diera cuenta.</p>
-      
-      <p><strong>Esa salida lo cambió todo.</strong> Cuando te vi, el mundo se detuvo por un instante, solo pude suspirar y admirarte, deseando en silencio que ese momento fuera eterno. Desde entonces, algo se conectó de una forma tan natural, tan real, que hablar contigo de cualquier cosa se volvió fácil, seguro, auténtico.</p>
-      
+      <p><strong>Esa salida lo cambió todo.</strong> Cuando te vi, el mundo se detuvo por un instante, solo pude suspirar y admirarte, deseando en silencio que ese momento fuera eterno.</p>
       <p>Contigo descubrí partes de mí que no sabía que existían, emociones que nunca había sentido y una versión de mí que se siente más viva, más honesta, más feliz. A tu lado encuentro esa seguridad de ser quien realmente soy, sin máscaras, sin miedo. Me das tranquilidad, me das paz, me haces sentir en casa.</p>
-      
-      <p>Porque el amor no es solo risas. Lo verdaderamente hermoso también está en aprender a levantarse después de una caída, en saber perdonar y en seguir adelante. Amar es también enamorarse de los defectos, de las imperfecciones que te hacen real, humano, único.</p>
-      
-      <p>Es compartir sueños, alegrías, miedos y silencios. Es apoyar incluso en los días grises y celebrar los logros del otro como si fueran propios. Es entender que el camino nunca será fácil, pero que caminarlo juntos hace que todo valga la pena.</p>
-      
-      <p style="text-align:center; font-size: 1.3rem; margin-top: 30px;"><strong>Y yo te elijo a ti, una y otra vez. ❤️</strong></p>
+      <p>Porque el amor no es solo risas. Lo verdaderamente hermoso del amor también está en aprender a levantarse después de una caída, en saber perdonar, en seguir adelante incluso cuando cuesta.</p>
+      <p>Amar es estar ahí, siempre. Es compartir sueños, alegrías, miedos y silencios. Es respetar las diferencias, abrazar las imperfecciones y entender que el camino nunca será fácil, pero que caminarlo juntos hace que todo valga la pena.</p>
+      <p style="text-align:center; font-size:1.2rem; margin-top:30px;"><strong>Y yo te elijo a ti, una y otra vez. ❤️</strong></p>
     </div>
   </div>
-
 </div>
 
 <script>
-function setup(id){
-  const a = document.getElementById("a"+id);
-  const b = document.getElementById("b"+id);
-  const bar = document.getElementById("bar"+id);
-  const lyricEl = document.getElementById("l"+id);
-  const lines = [...lyricEl.querySelectorAll("span")];
+function togglePlay(id) {
+  const audio = document.getElementById('audio'+id);
+  const btn = document.getElementById('btn'+id);
+  
+  // Pausar otros
+  document.querySelectorAll('audio').forEach(a => { if(a !== audio) a.pause(); });
+  document.querySelectorAll('.play-btn').forEach(b => { if(b !== btn) b.textContent = "▶"; });
 
-  b.onclick = () => {
-    if(a.paused){
-      document.querySelectorAll("audio").forEach(x => { x.pause(); });
-      document.querySelectorAll(".play").forEach(x => { x.textContent = "▶"; });
-      a.play();
-      b.textContent = "II";
-    } else {
-      a.pause();
-      b.textContent = "▶";
-    }
-  };
+  if (audio.paused) {
+    audio.play();
+    btn.textContent = "II";
+  } else {
+    audio.pause();
+    btn.textContent = "▶";
+  }
+}
 
-  a.ontimeupdate = () => {
-    const p = (a.currentTime / a.duration) * 100;
-    bar.style.width = p + "%";
+function updateLyrics(id) {
+  const audio = document.getElementById('audio'+id);
+  const bar = document.getElementById('bar'+id);
+  const wrapper = document.getElementById('wrap'+id);
+  const lines = wrapper.querySelectorAll('p');
+  
+  audio.ontimeupdate = () => {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    bar.style.width = pct + "%";
 
-    let currentLine = null;
-    lines.forEach(l => {
-      if(a.currentTime >= parseFloat(l.dataset.t)){
-        currentLine = l;
+    let current = null;
+    lines.forEach((line, index) => {
+      const time = parseFloat(line.dataset.t);
+      if (audio.currentTime >= time) {
+        current = line;
+        // Animación de scroll
+        const offset = index * -54; // Altura aproximada de cada línea
+        wrapper.style.transform = `translateY(${offset + 30}px)`;
       }
     });
 
-    if(currentLine){
-      lines.forEach(x => x.classList.remove("active"));
-      currentLine.classList.add("active");
-      const offset = currentLine.offsetTop - lyricEl.offsetTop - 60;
-      lyricEl.scrollTo({ top: offset, behavior: 'smooth' });
+    if (current) {
+      lines.forEach(l => l.classList.remove('active'));
+      current.classList.add('active');
     }
   };
 }
 
-function revelarMensaje() {
-  const m = document.getElementById("msg");
-  const btn = document.getElementById("btnReveal");
-  m.style.display = "block";
-  btn.style.display = "none";
+function showMsg() {
+  document.getElementById('textMsg').style.display = "block";
+  document.getElementById('btnReveal').style.display = "none";
   setTimeout(() => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  }, 100);
+  }, 200);
 }
 
-setup(1); setup(2);
+function seek(e, id) {
+  const audio = document.getElementById('audio'+id);
+  const area = e.currentTarget;
+  const pct = e.offsetX / area.offsetWidth;
+  audio.currentTime = pct * audio.duration;
+}
+
+updateLyrics(1);
+updateLyrics(2);
 </script>
 
 </body>
