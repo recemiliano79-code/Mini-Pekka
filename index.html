@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Ti</title>
+<title>Nuestra Historia</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --color-1:#a8d1ff; /* Tono suave para la primera canción */
-  --color-2:#ffd080; /* Tono cálido para la segunda */
+  --color-1:#a8d1ff; 
+  --color-2:#ffd080; 
   --glass:rgba(255,255,255,.05);
 }
 
@@ -19,22 +19,21 @@ body {
   min-height: 100vh;
   font-family: 'Outfit', sans-serif;
   color: white;
-  background: #050505;
+  background: #000;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  overflow-x: hidden;
 }
 
-/* --- FONDO ESTRELLADO --- */
-.stars-container {
+/* --- LLUVIA DE METEORITOS (CANVAS) --- */
+#meteorCanvas {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   z-index: -1;
-  background: radial-gradient(circle at center, #111 0%, #000 100%);
 }
 
-/* --- TÍTULO --- */
 h1 {
   font-family: 'Dancing Script', cursive;
   font-size: 3rem;
@@ -44,7 +43,7 @@ h1 {
   text-shadow: 0 0 20px rgba(255,255,255,0.5);
 }
 
-.container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 30px; }
+.container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 30px; position: relative; z-index: 1; }
 
 .card {
   background: var(--glass);
@@ -58,7 +57,6 @@ h1 {
 .song-title { font-size: 1.6rem; font-weight: 700; display: block; }
 .song-artist { font-size: 0.9rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 2px; }
 
-/* REPRODUCTOR */
 .player-controls {
   display: flex; align-items: center; gap: 15px;
   background: white; border-radius: 50px; padding: 8px 15px;
@@ -73,29 +71,19 @@ h1 {
 .progress-area { flex: 1; height: 5px; background: #eee; border-radius: 5px; position: relative; cursor: pointer; }
 .progress-bar { height: 100%; width: 0%; background: #000; border-radius: 5px; }
 
-/* LETRAS DINÁMICAS */
 .lyrics-box {
   height: 120px; overflow-y: hidden; position: relative;
   text-align: center; mask-image: linear-gradient(transparent, black 20%, black 80%, transparent);
 }
 
 .lyrics-wrapper { transition: transform 0.4s ease-out; }
+.lyrics-box p { margin: 0; padding: 15px 0; font-size: 1.1rem; opacity: 0.2; transition: all 0.4s ease; transform: scale(0.9); }
+.lyrics-box p.active { opacity: 1; transform: scale(1.1); font-weight: 600; }
 
-.lyrics-box p {
-  margin: 0; padding: 15px 0; font-size: 1.1rem;
-  opacity: 0.2; transition: all 0.4s ease;
-  transform: scale(0.9);
-}
-
-.lyrics-box p.active {
-  opacity: 1; transform: scale(1.1); font-weight: 600;
-}
-
-/* MENSAJE */
 .btn-leer {
   background: white; color: black; border: none; padding: 20px;
   border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;
-  font-size: 1.1rem; transition: 0.3s;
+  font-size: 1.1rem; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .full-message {
@@ -108,12 +96,11 @@ h1 {
 strong { color: white; border-bottom: 1px solid var(--color-2); }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 </style>
 </head>
 <body>
 
-<div class="stars-container"></div>
+<canvas id="meteorCanvas"></canvas>
 
 <h1>Nuestra Historia</h1>
 
@@ -185,21 +172,67 @@ strong { color: white; border-bottom: 1px solid var(--color-2); }
 </div>
 
 <script>
+// --- LÓGICA DE METEORITOS ---
+const canvas = document.getElementById('meteorCanvas');
+const ctx = canvas.getContext('2d');
+let meteors = [];
+
+function initCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+class Meteor {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width + 300;
+    this.y = -100;
+    this.length = Math.random() * 80 + 50;
+    this.speed = Math.random() * 10 + 5;
+    this.opacity = 1;
+  }
+  draw() {
+    ctx.beginPath();
+    let gradient = ctx.createLinearGradient(this.x, this.y, this.x - this.length, this.y + this.length);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 2;
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(this.x - this.length, this.y + this.length);
+    ctx.stroke();
+  }
+  update() {
+    this.x -= this.speed;
+    this.y += this.speed;
+    if (this.y > canvas.height + 100) {
+      this.reset();
+    }
+  }
+}
+
+for (let i = 0; i < 5; i++) meteors.push(new Meteor());
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  meteors.forEach(m => { m.update(); m.draw(); });
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', initCanvas);
+initCanvas();
+animate();
+
+// --- LÓGICA DE AUDIO Y MENSAJE ---
 function togglePlay(id) {
   const audio = document.getElementById('audio'+id);
   const btn = document.getElementById('btn'+id);
-  
-  // Pausar otros
   document.querySelectorAll('audio').forEach(a => { if(a !== audio) a.pause(); });
   document.querySelectorAll('.play-btn').forEach(b => { if(b !== btn) b.textContent = "▶"; });
-
-  if (audio.paused) {
-    audio.play();
-    btn.textContent = "II";
-  } else {
-    audio.pause();
-    btn.textContent = "▶";
-  }
+  if (audio.paused) { audio.play(); btn.textContent = "II"; } 
+  else { audio.pause(); btn.textContent = "▶"; }
 }
 
 function updateLyrics(id) {
@@ -207,22 +240,16 @@ function updateLyrics(id) {
   const bar = document.getElementById('bar'+id);
   const wrapper = document.getElementById('wrap'+id);
   const lines = wrapper.querySelectorAll('p');
-  
   audio.ontimeupdate = () => {
     const pct = (audio.currentTime / audio.duration) * 100;
     bar.style.width = pct + "%";
-
     let current = null;
     lines.forEach((line, index) => {
-      const time = parseFloat(line.dataset.t);
-      if (audio.currentTime >= time) {
+      if (audio.currentTime >= parseFloat(line.dataset.t)) {
         current = line;
-        // Animación de scroll
-        const offset = index * -54; // Altura aproximada de cada línea
-        wrapper.style.transform = `translateY(${offset + 30}px)`;
+        wrapper.style.transform = `translateY(${index * -54 + 30}px)`;
       }
     });
-
     if (current) {
       lines.forEach(l => l.classList.remove('active'));
       current.classList.add('active');
@@ -233,20 +260,15 @@ function updateLyrics(id) {
 function showMsg() {
   document.getElementById('textMsg').style.display = "block";
   document.getElementById('btnReveal').style.display = "none";
-  setTimeout(() => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  }, 200);
+  setTimeout(() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 200);
 }
 
 function seek(e, id) {
   const audio = document.getElementById('audio'+id);
-  const area = e.currentTarget;
-  const pct = e.offsetX / area.offsetWidth;
-  audio.currentTime = pct * audio.duration;
+  audio.currentTime = (e.offsetX / e.currentTarget.offsetWidth) * audio.duration;
 }
 
-updateLyrics(1);
-updateLyrics(2);
+updateLyrics(1); updateLyrics(2);
 </script>
 
 </body>
