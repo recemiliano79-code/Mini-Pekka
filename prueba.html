@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<body>
+
+<button onclick="play()">REPRODUCIR</button>
+
+<audio id="audio" src="sparks.mp3"></audio>
+
+<script>
+function play(){
+  const a = document.getElementById("audio");
+  a.play().catch(e => alert(e));
+}
+</script>
+
+</body>
+</html>
