@@ -24,33 +24,12 @@ body{
   flex-direction:column;
   align-items:center;
   padding:20px;
-  box-sizing:border-box;
-  overflow-x:hidden;
-}
-
-#stars{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:radial-gradient(circle,#111 0%,#000 70%);
-}
-
-.star{
-  position:absolute;
-  background:white;
-  border-radius:50%;
-  animation:twinkle var(--d) infinite ease-in-out;
-}
-
-@keyframes twinkle{
-  0%,100%{opacity:.3;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.3)}
 }
 
 h1{
   font-family:'Dancing Script',cursive;
-  font-size:3.5rem;
-  margin:15px 0;
+  font-size:3.3rem;
+  margin:10px 0 20px;
   background:linear-gradient(to right,var(--sparks),var(--brillas));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
@@ -67,18 +46,16 @@ h1{
 
 .card{
   background:var(--glass);
-  backdrop-filter:blur(15px);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:35px;
+  backdrop-filter:blur(14px);
+  border-radius:30px;
   padding:25px;
   text-align:center;
-  box-shadow:0 15px 40px rgba(0,0,0,.6);
+  box-shadow:0 15px 35px rgba(0,0,0,.5);
 }
 
 .song-title{
   font-size:1.9rem;
   font-weight:700;
-  margin:0;
 }
 
 .song-artist{
@@ -132,27 +109,19 @@ h1{
 }
 
 .lyrics{
-  height:170px;
-  overflow-y:auto;
   font-size:.95rem;
   line-height:1.8;
   color:#ddd;
-  scrollbar-width:none;
 }
-
-.lyrics::-webkit-scrollbar{display:none}
 
 .highlight{
   color:white;
   font-weight:700;
-  border-bottom:1px solid rgba(255,255,255,.3);
 }
 </style>
 </head>
 
 <body>
-
-<div id="stars"></div>
 
 <h1>Sparks & Brillas</h1>
 
@@ -160,11 +129,13 @@ h1{
 
 <!-- SPARKS -->
 <div class="card">
-  <p class="song-title" style="color:var(--sparks)">Sparks</p>
-  <p class="song-artist">Coldplay</p>
+  <div class="song-title" style="color:var(--sparks)">Sparks</div>
+  <div class="song-artist">Coldplay</div>
 
   <div class="player">
-    <audio id="a1" src="sparks.mp3"></audio>
+    <audio id="a1" preload="metadata">
+      <source src="sparks.mp3" type="audio/mpeg">
+    </audio>
     <button class="play" id="b1">▶</button>
     <div class="time" id="t1">0:00</div>
     <div class="progress" data-id="1"><div class="bar" id="bar1"></div></div>
@@ -180,11 +151,13 @@ h1{
 
 <!-- BRILLAS -->
 <div class="card">
-  <p class="song-title" style="color:var(--brillas)">Brillas</p>
-  <p class="song-artist">León Cordero</p>
+  <div class="song-title" style="color:var(--brillas)">Brillas</div>
+  <div class="song-artist">León Larregui</div>
 
   <div class="player">
-    <audio id="a2" src="brillas.mp3"></audio>
+    <audio id="a2" preload="metadata">
+      <source src="brillas.mp3" type="audio/mpeg">
+    </audio>
     <button class="play" id="b2">▶</button>
     <div class="time" id="t2">0:00</div>
     <div class="progress" data-id="2"><div class="bar" id="bar2" style="background:var(--brillas)"></div></div>
@@ -201,20 +174,6 @@ h1{
 </div>
 
 <script>
-/* estrellas */
-const stars=document.getElementById("stars");
-for(let i=0;i<50;i++){
-  const s=document.createElement("div");
-  s.className="star";
-  const size=Math.random()*2+1;
-  s.style.width=s.style.height=size+"px";
-  s.style.left=Math.random()*100+"%";
-  s.style.top=Math.random()*100+"%";
-  s.style.setProperty("--d",Math.random()*3+2+"s");
-  stars.appendChild(s);
-}
-
-/* reproductor */
 function setup(id){
   const a=document.getElementById("a"+id);
   const b=document.getElementById("b"+id);
@@ -223,8 +182,12 @@ function setup(id){
 
   b.onclick=()=>{
     document.querySelectorAll("audio").forEach(x=>{
-      if(x!==a){x.pause();document.getElementById("b"+x.id.slice(-1)).innerText="▶";}
+      if(x!==a){
+        x.pause();
+        document.getElementById("b"+x.id.slice(-1)).innerText="▶";
+      }
     });
+
     if(a.paused){a.play();b.innerText="⏸";}
     else{a.pause();b.innerText="▶";}
   };
