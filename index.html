@@ -11,94 +11,84 @@
 :root{
   --sparks:#4facfe;
   --brillas:#f39c12;
+  --glass:rgba(255,255,255,.08);
 }
 
 body{
   margin:0;
   min-height:100vh;
-  background:#050505;
-  color:white;
   font-family:'Outfit',sans-serif;
+  color:white;
+  background:linear-gradient(-45deg,#020024,#090979,#020024);
+  background-size:400% 400%;
+  animation:bg 18s ease infinite;
   display:flex;
   flex-direction:column;
   align-items:center;
   padding:20px;
-  overflow:hidden;
 }
 
-/* 🌌 FONDO ANIMADO */
-.bg{
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(79,172,254,.15), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(243,156,18,.15), transparent 40%);
-  animation: move 12s ease-in-out infinite alternate;
-  z-index:-1;
-}
-
-@keyframes move{
-  from{transform:scale(1) translateY(0)}
-  to{transform:scale(1.2) translateY(-20px)}
+@keyframes bg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 h1{
   font-family:'Dancing Script',cursive;
-  font-size:3.2rem;
-  margin:10px 0 20px;
+  font-size:3.4rem;
   background:linear-gradient(to right,var(--sparks),var(--brillas));
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-align:center;
+  margin-bottom:20px;
 }
 
 .container{
   width:100%;
-  max-width:420px;
+  max-width:430px;
   display:flex;
   flex-direction:column;
-  gap:25px;
+  gap:30px;
 }
 
 .card{
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(14px);
+  background:var(--glass);
+  backdrop-filter:blur(15px);
   border-radius:30px;
   padding:25px;
-  text-align:center;
-  box-shadow:0 15px 35px rgba(0,0,0,.5);
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
 }
 
 .song-title{
-  font-size:1.9rem;
+  font-size:2rem;
   font-weight:700;
+  text-align:center;
 }
 
 .song-artist{
-  font-size:.7rem;
-  letter-spacing:2px;
+  text-align:center;
+  font-size:.75rem;
   opacity:.6;
-  margin-bottom:10px;
-  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:15px;
 }
 
 .player{
-  background:#f1f3f4;
-  border-radius:50px;
-  padding:8px 15px;
   display:flex;
   align-items:center;
   gap:10px;
-  margin:20px 0;
-  color:#3c4043;
+  background:#f1f3f4;
+  border-radius:50px;
+  padding:8px 15px;
+  color:#333;
 }
 
 .play{
-  width:34px;
-  height:34px;
-  border:none;
+  width:36px;
+  height:36px;
   border-radius:50%;
-  background:#3c4043;
+  border:none;
+  background:#333;
   color:white;
   cursor:pointer;
 }
@@ -106,7 +96,7 @@ h1{
 .time{
   font-size:.75rem;
   font-weight:700;
-  min-width:35px;
+  min-width:38px;
 }
 
 .progress{
@@ -120,22 +110,19 @@ h1{
 .bar{
   height:100%;
   width:0%;
-  background:#3c4043;
+  background:#333;
   border-radius:10px;
 }
 
-.lyrics{
-  font-size:.95rem;
-  line-height:1.8;
-  color:#bbb;
-}
-
-.line{
+.lyrics span{
   display:block;
+  padding:6px 0;
+  opacity:.4;
   transition:.3s;
 }
 
-.active{
+.lyrics span.active{
+  opacity:1;
   color:white;
   font-weight:700;
 }
@@ -143,7 +130,6 @@ h1{
 </head>
 
 <body>
-<div class="bg"></div>
 
 <h1>Sparks & Brillas</h1>
 
@@ -155,56 +141,83 @@ h1{
   <div class="song-artist">Coldplay</div>
 
   <div class="player">
-    <audio id="a1" preload="metadata">
-      <source src="sparks.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="a1" src="sparks.mp3"></audio>
     <button class="play" id="b1">▶</button>
     <div class="time" id="t1">0:00</div>
-    <div class="progress" id="p1"><div class="bar" id="bar1"></div></div>
+    <div class="progress" data-id="1"><div class="bar" id="bar1"></div></div>
   </div>
 
-  <div class="lyrics" id="lyrics1">
-    <span class="line" data-time="0">Did I drive you away?</span>
-    <span class="line" data-time="8">I know what you'll say</span>
-    <span class="line" data-time="15">I'll always look out for you</span>
-    <span class="line" data-time="22">My heart is yours</span>
+  <div class="lyrics" id="l1">
+    <!-- PEGA AQUÍ LAS LETRAS DE SPARKS CON data-t -->
+    <span data-t="0">Primera línea</span>
+    <span data-t="12">Siguiente línea</span>
   </div>
+</div>
+
+<!-- BRILLAS -->
+<div class="card">
+  <div class="song-title" style="color:var(--brillas)">Brillas</div>
+  <div class="song-artist">León Larregui</div>
+
+  <div class="player">
+    <audio id="a2" src="brillas.mp3"></audio>
+    <button class="play" id="b2">▶</button>
+    <div class="time" id="t2">0:00</div>
+    <div class="progress" data-id="2"><div class="bar" id="bar2" style="background:var(--brillas)"></div></div>
+  </div>
+
+  <div class="lyrics" id="l2">
+    <!-- PEGA AQUÍ LAS LETRAS DE BRILLAS -->
+    <span data-t="0">Primera línea</span>
+  </div>
+</div>
+
+<!-- MENSAJE -->
+<div class="card">
+  <div class="song-title">¿Sabes por qué te amo?</div>
+  <p style="line-height:1.9;color:#ddd">
+Porque intentar expresar todo lo que vive en mi corazón y en mi mente cuando pienso en ti es casi imposible…  
+<br><br>
+No tuviste que hacer nada extraordinario para ganarte mi amor, simplemente fuiste tú, siendo tú.  
+Tu sonrisa, tu mirada, tus gestos, tu forma de hablar, incluso tus silencios…
+<br><br>
+Esa salida lo cambió todo. Cuando te vi, el mundo se detuvo por un instante.
+<br><br>
+A tu lado puedo ser yo, sin máscaras, sin miedo. Me das paz, me das hogar.
+<br><br>
+El amor es elegir quedarse, aprender, crecer y caminar juntos.
+<br><br>
+Y yo te elijo a ti, una y otra vez.
+  </p>
 </div>
 
 </div>
 
 <script>
-const audio=document.getElementById("a1");
-const btn=document.getElementById("b1");
-const bar=document.getElementById("bar1");
-const time=document.getElementById("t1");
-const progress=document.getElementById("p1");
-const lines=document.querySelectorAll("#lyrics1 .line");
+function setup(id){
+ const a=document.getElementById("a"+id);
+ const b=document.getElementById("b"+id);
+ const t=document.getElementById("t"+id);
+ const bar=document.getElementById("bar"+id);
+ const lines=document.querySelectorAll("#l"+id+" span");
 
-btn.onclick=()=>{
-  audio.paused ? audio.play() : audio.pause();
-  btn.textContent=audio.paused?"▶":"⏸";
-};
+ b.onclick=()=>{
+  document.querySelectorAll("audio").forEach(x=>x.pause());
+  a.play();
+ };
 
-audio.ontimeupdate=()=>{
-  if(audio.duration){
-    bar.style.width=(audio.currentTime/audio.duration*100)+"%";
-    let m=Math.floor(audio.currentTime/60);
-    let s=Math.floor(audio.currentTime%60);
-    time.textContent=m+":"+(s<10?"0":"")+s;
-  }
+ a.ontimeupdate=()=>{
+  bar.style.width=(a.currentTime/a.duration*100)+"%";
+  let m=Math.floor(a.currentTime/60);
+  let s=Math.floor(a.currentTime%60);
+  t.textContent=m+":"+(s<10?"0":"")+s;
 
-  lines.forEach((l,i)=>{
-    const start=parseFloat(l.dataset.time);
-    const next=lines[i+1]?.dataset.time || 999;
-    l.classList.toggle("active", audio.currentTime>=start && audio.currentTime<next);
+  lines.forEach(l=>{
+   l.classList.toggle("active",a.currentTime>=l.dataset.t);
   });
-};
-
-progress.onclick=e=>{
-  const r=progress.getBoundingClientRect();
-  audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
-};
+ };
+}
+setup(1); setup(2);
 </script>
 
 </body>
