@@ -11,7 +11,7 @@
 :root{
   --sparks:#6fb1ff;
   --brillas:#f7b733;
-  --glass:rgba(255,255,255,.05);
+  --glass:rgba(255,255,255,.07);
 }
 
 body {
@@ -27,99 +27,110 @@ body {
   padding: 20px;
 }
 
-/* --- EFECTO ESTRELLAS --- */
+/* --- FONDO ESPACIAL --- */
 .stars-container {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   z-index: -1;
-  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  background: radial-gradient(ellipse at bottom, #0d1d31 0%, #000 100%);
 }
 
 .shooting-star {
   position: absolute;
-  left: 50%; top: 50%;
   height: 2px;
-  background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0));
-  border-radius: 999px;
-  filter: drop-shadow(0 0 6px #699bff);
-  animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
+  background: linear-gradient(-45deg, #fff, rgba(0, 0, 255, 0));
+  filter: drop-shadow(0 0 6px #fff);
+  animation: shooting 4s ease-in-out infinite;
+  opacity: 0;
 }
 
-@keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
-@keyframes shooting { 0% { transform: translateX(0) translateY(0) rotate(45deg); } 100% { transform: translateX(-500px) translateY(500px) rotate(45deg); } }
+@keyframes shooting {
+  0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 1; width: 0; }
+  20% { width: 150px; }
+  100% { transform: translateX(-600px) translateY(600px) rotate(45deg); opacity: 0; width: 0; }
+}
 
-/* Configuración de estrellas fugaces en posiciones aleatorias */
-.shooting-star:nth-child(1) { top: 10%; left: 90%; animation-delay: 0s; }
-.shooting-star:nth-child(2) { top: 30%; left: 80%; animation-delay: 1.2s; }
-.shooting-star:nth-child(3) { top: 50%; left: 70%; animation-delay: 2.5s; }
+.shooting-star:nth-child(1) { top: 0%; right: 10%; animation-delay: 0s; }
+.shooting-star:nth-child(2) { top: 20%; right: 30%; animation-delay: 2s; }
+.shooting-star:nth-child(3) { top: -10%; right: 50%; animation-delay: 4.5s; }
 
 /* --- INTERFAZ --- */
 h1 {
   font-family: 'Dancing Script', cursive;
-  font-size: 3.6rem;
-  background: linear-gradient(to right, var(--sparks), var(--brillas));
+  font-size: 3.5rem;
+  background: linear-gradient(to right, var(--sparks), #fff, var(--brillas));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 25px;
+  margin: 20px 0;
   text-align: center;
 }
 
-.container { width: 100%; max-width: 430px; display: flex; flex-direction: column; gap: 30px; }
+.container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 25px; padding-bottom: 50px; }
 
 .card {
   background: var(--glass);
-  backdrop-filter: blur(12px);
-  border-radius: 32px;
-  padding: 26px;
+  backdrop-filter: blur(15px);
+  border-radius: 28px;
+  padding: 25px;
   border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
-.song-title { font-size: 1.8rem; font-weight: 700; text-align: center; }
-.song-artist { text-align: center; font-size: .8rem; opacity: .6; letter-spacing: 2px; margin-bottom: 15px; }
+.song-title { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 5px; }
+.song-artist { text-align: center; font-size: .8rem; opacity: .6; letter-spacing: 2px; margin-bottom: 20px; }
 
 .player {
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(255,255,255,0.9);
-  border-radius: 50px; padding: 8px 15px; color: #333; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,1);
+  border-radius: 50px; padding: 10px 18px; color: #111; margin-bottom: 20px;
 }
 
 .play {
-  width: 35px; height: 35px; border-radius: 50%; border: none;
-  background: #222; color: white; cursor: pointer; font-size: 1rem;
+  width: 40px; height: 40px; border-radius: 50%; border: none;
+  background: #111; color: white; cursor: pointer; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center;
 }
 
-.progress { flex: 1; height: 5px; background: rgba(0,0,0,0.1); border-radius: 10px; position: relative; }
-.bar { height: 100%; width: 0%; background: #222; border-radius: 10px; transition: width 0.1s linear; }
+.progress { flex: 1; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; cursor: pointer; overflow: hidden; }
+.bar { height: 100%; width: 0%; background: #111; border-radius: 10px; transition: width 0.1s linear; }
 
 .lyrics {
-  max-height: 200px; overflow-y: hidden; 
-  text-align: center; transition: all 0.5s ease;
+  max-height: 160px; overflow-y: hidden; text-align: center;
 }
 
 .lyrics span {
-  display: block; padding: 8px 0; font-size: 1.1rem;
-  opacity: 0.2; transition: all 0.4s ease; transform: scale(0.9);
+  display: block; padding: 10px 0; font-size: 1.1rem;
+  opacity: 0.15; transition: all 0.5s ease; transform: scale(0.9);
 }
 
 .lyrics span.active {
   opacity: 1; color: white; font-weight: 700; transform: scale(1.1);
 }
 
-/* BOTÓN MENSAJE */
+/* MENSAJE ESPECIAL */
 .btn-mensaje {
-  background: linear-gradient(45deg, var(--sparks), var(--brillas));
-  border: none; padding: 15px; border-radius: 15px;
+  background: white; border: none; padding: 18px; border-radius: 20px;
   color: #000; font-weight: 700; cursor: pointer; width: 100%;
-  font-family: 'Outfit'; font-size: 1rem; transition: 0.3s;
+  font-family: 'Outfit'; font-size: 1.1rem; transition: 0.4s;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
 }
+
+.btn-mensaje:hover { transform: scale(1.02); background: #f0f0f0; }
 
 .message-content {
-  display: none; margin-top: 20px; line-height: 1.6;
-  animation: fadeIn 1s forwards; text-align: center;
+  display: none; margin-top: 25px; line-height: 1.8;
+  text-align: left; font-size: 1.05rem; color: #efefef;
+  animation: slideUp 1.2s ease forwards;
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.message-content p { margin-bottom: 15px; }
+
+@keyframes slideUp { 
+  from { opacity: 0; transform: translateY(30px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+
+strong { color: var(--brillas); }
 </style>
 </head>
 
@@ -138,54 +149,57 @@ h1 {
   <div class="card">
     <div class="song-title" style="color:var(--sparks)">Sparks</div>
     <div class="song-artist">Coldplay</div>
-
     <div class="player">
       <audio id="a1" src="sparks.mp3"></audio>
       <button class="play" id="b1">▶</button>
       <div class="progress"><div class="bar" id="bar1"></div></div>
     </div>
-
     <div class="lyrics" id="l1">
+      <span data-t="0">...</span>
       <span data-t="15">Did I drive you away?</span>
       <span data-t="21">I know what you'll say</span>
       <span data-t="25">You say, "Oh, sing one we know"</span>
       <span data-t="32">But I promise you this</span>
       <span data-t="37">I'll always look out for you</span>
       <span data-t="42">Yeah, that's what I'll do</span>
-      <span data-t="48">I say, "Oh"</span>
       <span data-t="72">My heart is yours</span>
-      <span data-t="78">It's you that I hold on to</span>
     </div>
   </div>
 
   <div class="card">
     <div class="song-title" style="color:var(--brillas)">Brillas</div>
     <div class="song-artist">León Larregui</div>
-
     <div class="player">
       <audio id="a2" src="brillas.mp3"></audio>
       <button class="play" id="b2">▶</button>
       <div class="progress"><div class="bar" id="bar2" style="background:var(--brillas)"></div></div>
     </div>
-
     <div class="lyrics" id="l2">
+      <span data-t="0">...</span>
       <span data-t="18">Nos dimos todo lo que se nos dio</span>
       <span data-t="24">Nos dimos todo eso y mucho más</span>
       <span data-t="30">Para después reconocernos otra vez</span>
-      <span data-t="42">Amanecer colgado de tus labios</span>
       <span data-t="55">Brillas, y brillas tan lindo</span>
       <span data-t="62">Y brillamos juntos entre pestañas</span>
-      <span data-t="68">Divina, divina sonrisa</span>
-      <span data-t="74">Abrazo de luna, de luna llena</span>
     </div>
   </div>
 
-  <div class="card" style="text-align: center;">
-    <button class="btn-mensaje" onclick="revelarMensaje()">Presiona para un mensaje especial ✨</button>
+  <div class="card">
+    <button class="btn-mensaje" id="btnReveal" onclick="revelarMensaje()">¿Sabes por qué te amo? ✨</button>
     <div class="message-content" id="msg">
-      <p>Porque intentar expresar todo lo que vive en mi corazón cuando pienso en ti es casi imposible...</p>
-      <p>No tuviste que hacer nada extraordinario para ganarte mi amor, simplemente fuiste tú.</p>
-      <p><strong>Y yo te elijo a ti, una y otra vez.</strong></p>
+      <p>Porque intentar expresar todo lo que vive en mi corazón y en mi mente cuando pienso en ti es casi imposible, las palabras a veces se quedan cortas para lo que siento.</p>
+      
+      <p>No tuviste que hacer nada extraordinario para ganarte mi amor, no hubo esfuerzos forzados ni promesas vacías, simplemente fuiste tú, siendo tú. Tu sonrisa, tu mirada, tus gestos, tu forma de hablar, incluso tus silencios… todo en ti empezó a quedarse conmigo sin que me diera cuenta.</p>
+      
+      <p><strong>Esa salida lo cambió todo.</strong> Cuando te vi, el mundo se detuvo por un instante, solo pude suspirar y admirarte, deseando en silencio que ese momento fuera eterno. Desde entonces, algo se conectó de una forma tan natural, tan real, que hablar contigo de cualquier cosa se volvió fácil, seguro, auténtico.</p>
+      
+      <p>Contigo descubrí partes de mí que no sabía que existían, emociones que nunca había sentido y una versión de mí que se siente más viva, más honesta, más feliz. A tu lado encuentro esa seguridad de ser quien realmente soy, sin máscaras, sin miedo. Me das tranquilidad, me das paz, me haces sentir en casa.</p>
+      
+      <p>Porque el amor no es solo risas. Lo verdaderamente hermoso también está en aprender a levantarse después de una caída, en saber perdonar y en seguir adelante. Amar es también enamorarse de los defectos, de las imperfecciones que te hacen real, humano, único.</p>
+      
+      <p>Es compartir sueños, alegrías, miedos y silencios. Es apoyar incluso en los días grises y celebrar los logros del otro como si fueran propios. Es entender que el camino nunca será fácil, pero que caminarlo juntos hace que todo valga la pena.</p>
+      
+      <p style="text-align:center; font-size: 1.3rem; margin-top: 30px;"><strong>Y yo te elijo a ti, una y otra vez. ❤️</strong></p>
     </div>
   </div>
 
@@ -201,7 +215,8 @@ function setup(id){
 
   b.onclick = () => {
     if(a.paused){
-      document.querySelectorAll("audio").forEach(x => { x.pause(); x.currentTime = 0; });
+      document.querySelectorAll("audio").forEach(x => { x.pause(); });
+      document.querySelectorAll(".play").forEach(x => { x.textContent = "▶"; });
       a.play();
       b.textContent = "II";
     } else {
@@ -224,9 +239,7 @@ function setup(id){
     if(currentLine){
       lines.forEach(x => x.classList.remove("active"));
       currentLine.classList.add("active");
-      
-      // Desplazamiento suave de la letra
-      const offset = currentLine.offsetTop - lyricEl.offsetTop - 70;
+      const offset = currentLine.offsetTop - lyricEl.offsetTop - 60;
       lyricEl.scrollTo({ top: offset, behavior: 'smooth' });
     }
   };
@@ -234,8 +247,12 @@ function setup(id){
 
 function revelarMensaje() {
   const m = document.getElementById("msg");
+  const btn = document.getElementById("btnReveal");
   m.style.display = "block";
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  btn.style.display = "none";
+  setTimeout(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }, 100);
 }
 
 setup(1); setup(2);
