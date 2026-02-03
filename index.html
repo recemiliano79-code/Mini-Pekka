@@ -11,7 +11,6 @@
 :root{
   --sparks:#4facfe;
   --brillas:#f39c12;
-  --glass:rgba(255,255,255,.08);
 }
 
 body{
@@ -24,11 +23,28 @@ body{
   flex-direction:column;
   align-items:center;
   padding:20px;
+  overflow:hidden;
+}
+
+/* 🌌 FONDO ANIMADO */
+.bg{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(79,172,254,.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(243,156,18,.15), transparent 40%);
+  animation: move 12s ease-in-out infinite alternate;
+  z-index:-1;
+}
+
+@keyframes move{
+  from{transform:scale(1) translateY(0)}
+  to{transform:scale(1.2) translateY(-20px)}
 }
 
 h1{
   font-family:'Dancing Script',cursive;
-  font-size:3.3rem;
+  font-size:3.2rem;
   margin:10px 0 20px;
   background:linear-gradient(to right,var(--sparks),var(--brillas));
   -webkit-background-clip:text;
@@ -45,7 +61,7 @@ h1{
 }
 
 .card{
-  background:var(--glass);
+  background:rgba(255,255,255,.08);
   backdrop-filter:blur(14px);
   border-radius:30px;
   padding:25px;
@@ -111,10 +127,15 @@ h1{
 .lyrics{
   font-size:.95rem;
   line-height:1.8;
-  color:#ddd;
+  color:#bbb;
 }
 
-.highlight{
+.line{
+  display:block;
+  transition:.3s;
+}
+
+.active{
   color:white;
   font-weight:700;
 }
@@ -122,6 +143,7 @@ h1{
 </head>
 
 <body>
+<div class="bg"></div>
 
 <h1>Sparks & Brillas</h1>
 
@@ -138,81 +160,51 @@ h1{
     </audio>
     <button class="play" id="b1">▶</button>
     <div class="time" id="t1">0:00</div>
-    <div class="progress" data-id="1"><div class="bar" id="bar1"></div></div>
+    <div class="progress" id="p1"><div class="bar" id="bar1"></div></div>
   </div>
 
-  <div class="lyrics">
-    Did I drive you away?<br>
-    I know what you'll say<br>
-    <span class="highlight">I'll always look out for you</span><br>
-    My heart is yours.
-  </div>
-</div>
-
-<!-- BRILLAS -->
-<div class="card">
-  <div class="song-title" style="color:var(--brillas)">Brillas</div>
-  <div class="song-artist">León Larregui</div>
-
-  <div class="player">
-    <audio id="a2" preload="metadata">
-      <source src="brillas.mp3" type="audio/mpeg">
-    </audio>
-    <button class="play" id="b2">▶</button>
-    <div class="time" id="t2">0:00</div>
-    <div class="progress" data-id="2"><div class="bar" id="bar2" style="background:var(--brillas)"></div></div>
-  </div>
-
-  <div class="lyrics">
-    <span class="highlight">Brillas y brillas tan lindo</span><br>
-    Y brillamos juntos<br>
-    Divina sonrisa<br>
-    <span class="highlight">Abrazo de luna llena</span>
+  <div class="lyrics" id="lyrics1">
+    <span class="line" data-time="0">Did I drive you away?</span>
+    <span class="line" data-time="8">I know what you'll say</span>
+    <span class="line" data-time="15">I'll always look out for you</span>
+    <span class="line" data-time="22">My heart is yours</span>
   </div>
 </div>
 
 </div>
 
 <script>
-function setup(id){
-  const a=document.getElementById("a"+id);
-  const b=document.getElementById("b"+id);
-  const t=document.getElementById("t"+id);
-  const bar=document.getElementById("bar"+id);
+const audio=document.getElementById("a1");
+const btn=document.getElementById("b1");
+const bar=document.getElementById("bar1");
+const time=document.getElementById("t1");
+const progress=document.getElementById("p1");
+const lines=document.querySelectorAll("#lyrics1 .line");
 
-  b.onclick=()=>{
-    document.querySelectorAll("audio").forEach(x=>{
-      if(x!==a){
-        x.pause();
-        document.getElementById("b"+x.id.slice(-1)).innerText="▶";
-      }
-    });
+btn.onclick=()=>{
+  audio.paused ? audio.play() : audio.pause();
+  btn.textContent=audio.paused?"▶":"⏸";
+};
 
-    if(a.paused){a.play();b.innerText="⏸";}
-    else{a.pause();b.innerText="▶";}
-  };
+audio.ontimeupdate=()=>{
+  if(audio.duration){
+    bar.style.width=(audio.currentTime/audio.duration*100)+"%";
+    let m=Math.floor(audio.currentTime/60);
+    let s=Math.floor(audio.currentTime%60);
+    time.textContent=m+":"+(s<10?"0":"")+s;
+  }
 
-  a.ontimeupdate=()=>{
-    if(a.duration){
-      bar.style.width=(a.currentTime/a.duration*100)+"%";
-      let m=Math.floor(a.currentTime/60);
-      let s=Math.floor(a.currentTime%60);
-      t.innerText=m+":"+(s<10?"0":"")+s;
-    }
-  };
-}
+  lines.forEach((l,i)=>{
+    const start=parseFloat(l.dataset.time);
+    const next=lines[i+1]?.dataset.time || 999;
+    l.classList.toggle("active", audio.currentTime>=start && audio.currentTime<next);
+  });
+};
 
-setup(1);
-setup(2);
-
-document.querySelectorAll(".progress").forEach(p=>{
-  p.onclick=e=>{
-    const id=p.dataset.id;
-    const a=document.getElementById("a"+id);
-    const r=p.getBoundingClientRect();
-    a.currentTime=((e.clientX-r.left)/r.width)*a.duration;
-  };
-});
+progress.onclick=e=>{
+  const r=progress.getBoundingClientRect();
+  audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
+};
 </script>
 
 </body>
