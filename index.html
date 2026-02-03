@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sparks & Brillas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --sparks-blue: #4facfe; --brillas-gold: #f39c12; --glass: rgba(255, 255, 255, 0.08); }
+        body { margin: 0; background: #050505; color: white; font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; padding: 20px; box-sizing: border-box; }
+        #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #111 0%, #000 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d) infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.2); } }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; margin: 20px 0 5px 0; background: linear-gradient(to right, var(--sparks-blue), var(--brillas-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+        .container { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 400px; margin-top: 10px; }
+        .card { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 35px; padding: 25px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .custom-player { background: #f1f3f4; border-radius: 50px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; margin: 20px 0; color: #3c4043; }
+        .play-btn { background: #3c4043; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; flex-shrink: 0; }
+        .time-display { font-size: 0.75rem; min-width: 35px; font-weight: 700; }
+        .progress-container { flex-grow: 1; height: 4px; background: rgba(0,0,0,0.1); border-radius: 10px; position: relative; cursor: pointer; }
+        .progress-bar { height: 100%; background: #3c4043; width: 0%; border-radius: 10px; }
+        .song-title { font-size: 1.8rem; margin: 0; font-weight: 700; }
+        .song-artist { opacity: 0.5; letter-spacing: 2px; margin-bottom: 10px; font-size: 0.7rem; text-transform: uppercase; }
+        .lyrics-box { height: 180px; overflow-y: auto; font-size: 0.95rem; line-height: 1.8; color: #ddd; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent); }
+        .lyrics-box::-webkit-scrollbar { display: none; }
+        pre { white-space: pre-wrap; font-family: inherit; margin: 0; padding: 20px 0; }
+        .highlight { font-weight: 700; color: white; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+    <div id="star-container"></div>
+    <h1>Sparks & Brillas</h1>
+    <div class="container">
+        <!-- CARTA SPARKS -->
+        <div class="card">
+            <p class="song-title" style="color: var(--sparks-blue)">Sparks</p>
+            <p class="song-artist">Coldplay</p>
+            <div class="custom-player">
+                <audio id="audio1" src="sparks.mp3" preload="auto"></audio>
+                <button class="play-btn" id="btn1" onclick="togglePlay('1')">▶</button>
+                <div class="time-display" id="time1">0:00</div>
+                <div class="progress-container" onclick="seek(event, '1')"><div class="progress-bar" id="bar1"></div></div>
+            </div>
+            <div class="lyrics-box"><pre>
+Did I drive you away?
+I know what you'll say
+<span class="highlight">I'll always look out for you</span>
+My heart is yours.
+            </pre></div>
+        </div>
+        <!-- CARTA BRILLAS -->
+        <div class="card">
+            <p class="song-title" style="color: var(--brillas-gold)">Brillas</p>
+            <p class="song-artist">León Larregui</p>
+            <div class="custom-player">
+                <audio id="audio2" src="brillas.mp3" preload="auto"></audio>
+                <button class="play-btn" id="btn2" onclick="togglePlay('2')">▶</button>
+                <div class="time-display" id="time2">0:00</div>
+                <div class="progress-container" onclick="seek(event, '2')"><div class="progress-bar" id="bar2" style="background:var(--brillas-gold)"></div></div>
+            </div>
+            <div class="lyrics-box"><pre>
+<span class="highlight">Brillas y brillas tan lindo</span>
+Y brillamos juntos
+Divina sonrisa
+<span class="highlight">Abrazo de luna llena.</span>
+            </pre></div>
+        </div>
+    </div>
+    <script>
+        const starContainer = document.getElementById('star-container');
+        for (let i = 0; i < 50; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            const size = Math.random() * 2 + 1 + 'px';
+            s.style.width = size; s.style.height = size;
+            s.style.left = Math.random() * 100 + '%';
+            s.style.top = Math.random() * 100 + '%';
+            s.style.setProperty('--d', Math.random() * 3 + 2 + 's');
+            starContainer.appendChild(s);
+        }
+        function togglePlay(id) {
+            const audio = document.getElementById('audio' + id);
+            const btn = document.getElementById('btn' + id);
+            document.querySelectorAll('audio').forEach(a => { if (a !== audio) { a.pause(); document.getElementById('btn' + a.id.slice(-1)).innerText = '▶'; } });
+            if (audio.paused) { audio.play(); btn.innerText = '⏸'; } else { audio.pause(); btn.innerText = '▶'; }
+        }
+        function updateProgress(id) {
+            const audio = document.getElementById('audio' + id);
+            const bar = document.getElementById('bar' + id);
+            const timeTxt = document.getElementById('time' + id);
+            if (audio.duration) {
+                bar.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+                let m = Math.floor(audio.currentTime / 60), s = Math.floor(audio.currentTime % 60);
+                timeTxt.innerText = m + ":" + (s < 10 ? '0' : '') + s;
+            }
+        }
+        function seek(e, id) {
+            const audio = document.getElementById('audio' + id);
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            audio.currentTime = (x / rect.width) * audio.duration;
+        }
+        document.getElementById('audio1').ontimeupdate = () => updateProgress('1');
+        document.getElementById('audio2').ontimeupdate = () => updateProgress('2');
+    </script>
+</body>
+</html>
